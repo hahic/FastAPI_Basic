@@ -1,3 +1,5 @@
+import pendulum
+
 from abc import ABC, abstractmethod
 from typing import List, Type
 
@@ -6,7 +8,6 @@ from fastapi.openapi.models import APIKey, APIKeyIn
 from fastapi.security.base import SecurityBase
 
 from .exception import BaseException, UnauthorizedException
-from cache import RedisBackend
 
 
 class BasePermission(ABC):
@@ -24,15 +25,10 @@ class IsAuthenticated(BasePermission):
         if request.auth == False:
             return False
 
-        key: str = request.headers.get('ConsumerKey')
-        
-        id = request.user.id
-        check: str = await RedisBackend().get(key=id)
+        if request.user.exp <= pendulum.now('Asia/Seoul'):
+            return False
 
-        if key == check:
-            return True
-
-        return False
+        return True
 
 
 class AllowAll(BasePermission):

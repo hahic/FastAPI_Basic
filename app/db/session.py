@@ -49,8 +49,3 @@ session: Union[AsyncSession, async_scoped_session] = async_scoped_session(
     scopefunc=get_session_context,
 )
 Base = declarative_base()
-
-
-
-
-

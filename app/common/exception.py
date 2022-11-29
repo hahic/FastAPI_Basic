@@ -44,13 +44,13 @@ class UnprocessableEntity(BaseException):
 class DuplicateValueException(BaseException):
     code = HTTPStatus.UNPROCESSABLE_ENTITY
     error_code = HTTPStatus.UNPROCESSABLE_ENTITY
-    message = "value duplicate error"
+    message = "value duplicate"
     
 
 class NotExistValueException(BaseException):
     code = 422
     error_code = "NOT_EXIST_VALUE"
-    message = "value not exist error"
+    message = "value not exist"
 
 
 class DecodeTokenException(BaseException):
@@ -63,3 +63,9 @@ class ExpiredTokenException(BaseException):
     code = 400
     error_code = "TOKEN__EXPIRE_TOKEN"
     message = "expired token"
+    
+
+class NotExistTokenException(BaseException):
+    code = 400
+    error_code = "TOKEN__NOT_EXIST_TOKEN"
+    message = "token not exist"

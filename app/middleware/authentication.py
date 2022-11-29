@@ -1,7 +1,10 @@
 import jwt
+import pendulum
 
 from common import env, exception
 from cache import Cache
+
+from datetime import datetime
 
 from typing import Optional, Tuple, Union
 from pydantic import BaseModel
@@ -11,7 +14,8 @@ from starlette.requests import HTTPConnection
 
 
 class CurrentUser(BaseModel):
-    id: Union[None, str] = None
+    role: Union[None, str] = None
+    exp: Union[None, datetime] = None
 
     class Config:
         validate_assignment = True
@@ -40,11 +44,14 @@ class AuthBackend(AuthenticationBackend):
                 env.JWT_SECRET_KEY,
                 algorithms=[env.JWT_ALGORITHM],
             )
-            user_id = payload.get("user_id")
+            role = payload.get("role")
+            exp = payload.get("exp")
+            
         except jwt.exceptions.PyJWTError:
             return False, current_user
 
-        current_user.id = user_id
+        current_user.role = role
+        current_user.exp = pendulum.from_timestamp(exp, tz="Asia/Seoul")
         return True, current_user
 
 

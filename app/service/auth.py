@@ -1,5 +1,5 @@
 from model.auth.schema import RefreshTokenSchema
-from common.exception import DecodeTokenException, ExpiredTokenException
+from common.exception import DecodeTokenException, ExpiredTokenException, NotExistTokenException
 from common.utils import TokenHelper
 
 from sqlalchemy import select, update, and_
@@ -16,6 +16,14 @@ class JwtService:
         exp = pendulum.from_timestamp(data["exp"], tz="Asia/Seoul")
         if exp <= pendulum.now('Asia/Seoul'):
             raise ExpiredTokenException
+        
+        role = data["role"]
+        query = select(Auth).where(Auth.role == role)
+        data = await session.execute(query)
+        
+        is_exist = data.scalars().first()
+        if is_exist is None:
+            raise NotExistTokenException
         
         
     @Transactional(propagation=Propagation.REQUIRED)
