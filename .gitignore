@@ -205,7 +205,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# Custom
-gcp_key.json
-
 # End of https://www.toptal.com/developers/gitignore/api/python,linux,windows

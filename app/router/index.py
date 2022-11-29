@@ -8,5 +8,6 @@ index_router = APIRouter()
 def home():
     return {
         'writer': '임어진', 
-        'create_date': '2022-09-01'
+        'created date': '2022-09-01',
+        'last modifieddate': '2022-11-29'
         }

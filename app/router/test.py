@@ -1,32 +1,43 @@
-from model import test as md_test
+from model.test import request, response
 from typing import Union, List, Dict
 from fastapi import APIRouter, HTTPException, status
 
-from controller import test as ct_test
+from service.test import TestService 
 from loguru import logger
-from common import exception
 
 test_router = APIRouter()
 
 
-@test_router.get('/data', response_model=Dict[str, List[md_test.Test]])
-async def read_test():
-    try:
-        data = await ct_test.read_bigquery_data()
-        data = data.to_dict(orient = 'records')
-
-        return {'data': data}
-
-    except Exception as ex:
-        logger.error(ex)
-
-
-@test_router.get('/exception/{id}', response_model=Dict[str, List[md_test.Test]])
-async def exception_test(id: int):
-    data = await ct_test.read_bigquery_data()
-    data = data.to_dict(orient = 'records')
-
-    if id == 2:
-        raise exception.BadRequestException('test1')
-
+@test_router.post('/read/client', response_model=Dict[str, List[response.ReadClientResponse]])
+async def read_client(request: request.ReadClientRequest):
+    data = await TestService().read_client(**request.dict())
+    data = [dict(x.__dict__.items()) for x in data]
     return {'data': data}
+
+
+@test_router.post('/create/credit', response_model=Dict[str, response.CreateCreditResponse])
+async def create_credit(request: request.CreateCreditRequest):
+    data = await TestService().create_credit(**request.dict())
+    return {'data': data}
+
+
+@test_router.post('/read/credit', response_model=Dict[str, List[response.ReadCreditResponse]])
+async def read_credit(request: request.ReadCreditRequest):
+    data = await TestService().read_credit(**request.dict())
+    data = [dict(x.__dict__.items()) for x in data]
+    return {'data': data}
+        
+
+@test_router.post('/update/credit/byid', response_model=Dict[str, response.UpdateCreditByIdResponse])
+async def update_credit_by_id(request: request.UpdateCreditByIdRequest):
+    data = await TestService().update_credit_by_id(**request.dict())
+    return {'data': data}
+        
+
+@test_router.post('/delete/credit/byid', response_model=Dict[str, response.DeleteCreditByIdResponse])
+async def delete_credit_by_id(request: request.DeleteCreditByIdRequest):
+    data = await TestService().delete_credit_by_id(**request.dict())
+    data = dict(data.__dict__.items())
+    return {'data': data}
+        
+        
