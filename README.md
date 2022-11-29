@@ -2,7 +2,7 @@
 
 ## Installation
 ```python
-pip install -r requirement.text
+pip install -r .\requirement.txt
 ```
 
 
